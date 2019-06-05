@@ -7,18 +7,20 @@
 ```
 FROM mj520/golang AS build
 MAINTAINER build
-ENV AppName=k8s-test
-ADD . /go/src/tmp
-WORKDIR /go/src/tmp
-RUN go build -ldflags "-s -w" -o build/${AppName} main.go && \
-    upx -1 build/${AppName} && chmod +x build/${AppName}
+ENV AppName=main PackagePath=path/relative
+# PackagePath is a directory relative to main.go to /$GOPATH/src
+ADD . /${GOPATH}/src/${PackagePath}
+WORKDIR /${GOPATH}/src/${PackagePath}
+RUN go build -ldflags "-s -w" -o /build/${AppName} main.go && \
+    upx -1 /build/${AppName} && chmod +x /build/${AppName}
+    # && mv your need file and directory to /build/
 #second
 FROM alpine AS prod
-ENV AppName=k8s-test
-COPY --from=build /go/src/tmp/build/* /
+ENV AppName=main
+COPY --from=build /build/* /
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
 EXPOSE 80
-CMD /${AppName}
+CMD /${AppName} # your need Specify startup parameters
 ````
 ### 输出 upx 帮助信息
     docker run --rm mj520/golang 
