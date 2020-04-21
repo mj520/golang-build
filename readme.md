@@ -17,6 +17,12 @@ RUN go build -ldflags "-s -w" -o /build/${AppName} main.go && \
 #second
 FROM alpine AS prod
 ENV AppName=main
+ENV TZ=Asia/Shanghai
+RUN echo "https://mirrors.aliyun.com/alpine/latest-stable/main" > /etc/apk/repositories && \
+    echo "https://mirrors.aliyun.com/alpine/latest-stable/community" >> /etc/apk/repositories && \
+    #时区 ca-certificates 必须 不然证书相关会有问题 libc6-compat libgcc libstdc++ cgo 建议安装
+    apk --update add --no-cache && apk add -U tzdata bash ca-certificates && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 COPY --from=build /build/* /
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
 EXPOSE 80
