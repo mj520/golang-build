@@ -3,6 +3,7 @@
 ### 默认 alpine 版本
     80 开放、添加 github.com/jinzhu/configor 配置文件 CONFIGOR_ENV
     建议 upx -1 压缩速度，减少%50左右、-ldflags "-s -w" 减少构建代码量
+        使用go mod 是 代码中含有vendor 请使用参数 -mod=vendor
 ### 使用 latest
 ```
 FROM mj520/golang AS build
@@ -11,12 +12,18 @@ ENV AppName=main PackagePath=path/relative
 # PackagePath is a directory relative to main.go to ${GOPATH}/src
 ADD . ${GOPATH}/src/${PackagePath}
 WORKDIR ${GOPATH}/src/${PackagePath}
-RUN go build -ldflags "-s -w" -o /build/${AppName} main.go && \
+RUN go build  -ldflags "-s -w" -o /build/${AppName} main.go && \
     upx -1 /build/${AppName} && chmod +x /build/${AppName}
 #&& mv your need file and directory to /build/
 #second
 FROM alpine AS prod
 ENV AppName=main
+ENV TZ=Asia/Shanghai
+RUN echo "https://mirrors.aliyun.com/alpine/latest-stable/main" > /etc/apk/repositories && \
+    echo "https://mirrors.aliyun.com/alpine/latest-stable/community" >> /etc/apk/repositories && \
+    #时区 ca-certificates 必须 不然证书相关会有问题 libc6-compat libgcc libstdc++ cgo 建议安装
+    apk --update add --no-cache && apk add -U tzdata bash ca-certificates && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 COPY --from=build /build/* /
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
 EXPOSE 80
