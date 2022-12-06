@@ -1,5 +1,5 @@
-FROM golang:alpine3.16
-MAINTAINER golang alpine
+FROM registry.cn-hangzhou.aliyuncs.com/mj520/golang-build:golang-alpine3.16
+MAINTAINER golang-alpine3.16
 ENV CONFIGOR_ENV=development
 ADD container-files /
 RUN chmod +x -R /usr/bin/ && \
