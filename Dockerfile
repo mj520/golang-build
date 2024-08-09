@@ -3,7 +3,7 @@ MAINTAINER golang-alpine3.16
 ENV CONFIGOR_ENV=development
 ADD container-files /
 RUN chmod +x -R /usr/bin/ && \
-    chmod +x /docker-entrypoint.sh && \
+    chmod +x /build/* && \
     echo "https://mirrors.aliyun.com/alpine/v3.16/main" > /etc/apk/repositories && \
     echo "https://mirrors.aliyun.com/alpine/v3.16/community" >> /etc/apk/repositories && \
     echo "https://mirrors.aliyun.com/alpine/edge/testing" >> /etc/apk/repositories && \
