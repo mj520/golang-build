@@ -10,6 +10,6 @@ RUN chmod +x -R /usr/bin/ && \
     apk --update add --no-cache && \
     apk add iproute2 bind-tools net-tools vim curl util-linux bash && \
     apk add --upgrade zig upx
-ENTRYPOINT [ "/docker-entrypoint.sh" ]
+ENTRYPOINT [ "/build/docker-entrypoint.sh" ]
 EXPOSE 80
 CMD upx

@@ -25,6 +25,7 @@ RUN echo "https://mirrors.aliyun.com/alpine/v3.16/main" > /etc/apk/repositories 
     apk --update add --no-cache && apk add -U tzdata bash ca-certificates && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 COPY --from=build /build/* /
+COPY --from=build /docker-entrypoint.sh /
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
 EXPOSE 80
 #your need Specify startup parameters
